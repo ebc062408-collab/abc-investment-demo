@@ -8,6 +8,7 @@
 <style>
 :root {
   --pink: #ec4899;
+  --purple: #a855f7;
   --dark: #9d174d;
   --light: #fff1f7;
 }
@@ -19,18 +20,14 @@ body {
   color: #402338;
 }
 header {
-  background: linear-gradient(135deg, #ec4899, #a855f7);
+  background: linear-gradient(135deg, var(--pink), var(--purple));
   color: white;
-  padding: 24px 18px;
+  padding: 26px 18px;
   border-radius: 0 0 25px 25px;
 }
 header h1 { margin: 0 0 8px; }
 header p { margin-bottom: 0; }
-main {
-  max-width: 760px;
-  margin: auto;
-  padding: 18px;
-}
+main { max-width: 760px; margin: auto; padding: 18px; }
 .notice {
   background: #fff0c2;
   padding: 12px;
@@ -45,7 +42,7 @@ main {
   margin: 16px 0;
   box-shadow: 0 4px 18px #e9b6d433;
 }
-.amount { font-size: 32px; color: var(--dark); }
+.amount { font-size: 32px; color: var(--dark); font-weight: bold; }
 button, .link {
   display: inline-block;
   border: 0;
@@ -58,6 +55,7 @@ button, .link {
   text-decoration: none;
   cursor: pointer;
 }
+button:hover, .link:hover { opacity: .88; }
 .secondary { background: #fce7f3; color: var(--dark); }
 .grid {
   display: grid;
@@ -69,9 +67,10 @@ button, .link {
   border: 1px solid #fbcfe8;
   border-radius: 16px;
   padding: 16px;
+  margin-bottom: 12px;
 }
 .card h3 { color: var(--dark); }
-input, select {
+input {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
@@ -79,6 +78,20 @@ input, select {
   border-radius: 10px;
 }
 section { margin: 22px 0; }
+.message {
+  background: #fce7f3;
+  color: var(--dark);
+  padding: 12px;
+  border-radius: 10px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.record {
+  padding: 12px 0;
+  border-bottom: 1px solid #fbcfe8;
+  line-height: 1.5;
+}
+small { color: #85546d; }
 footer {
   text-align: center;
   padding: 25px;
@@ -96,70 +109,49 @@ footer {
 <main>
   <div class="notice">
     <strong>DEMO MODE ONLY</strong><br>
-    This is a website prototype. All balances and
-    transactions are simulated. No real money is
-    accepted, and no investment returns are promised.
+    This is a website prototype. All balances,
+    investments and transactions are simulated.
+    No real money is accepted. No investment returns
+    are promised. Demo activity is temporary.
   </div>
 
   <section class="balance">
     <p>Demo Wallet Balance</p>
-    <div class="amount">₱0.00</div>
-    <button onclick="showDemo('Top Up')">Top Up</button>
-    <button class="secondary"
-      onclick="showDemo('Withdrawal')">Withdraw</button>
-    <p id="message"></p>
+    <div class="amount" id="balance">₱0.00</div>
+
+    <label for="amount">Amount (demo only, PHP)</label>
+    <input id="amount" type="number" min="1"
+      step="1" placeholder="Enter an amount">
+
+    <button onclick="topUp()">Demo Top Up</button>
+    <button class="secondary" onclick="withdraw()">Demo Withdraw</button>
+    <p id="message" class="message" role="status">
+      Welcome! This wallet uses simulated money only.
+    </p>
   </section>
 
   <section>
     <h2>Investment Packages</h2>
     <p>Illustrative packages — not real investment offers.</p>
-    <div class="grid">
-      <div class="card">
-        <h3>Starter</h3>
-        <p>₱100</p>
-        <p>Demo duration: 30 days</p>
-        <button onclick="showDemo('Starter package')">
-          View Details
-        </button>
-      </div>
-      <div class="card">
-        <h3>Basic</h3>
-        <p>₱500</p>
-        <p>Demo duration: 60 days</p>
-        <button onclick="showDemo('Basic package')">
-          View Details
-        </button>
-      </div>
-      <div class="card">
-        <h3>Premium</h3>
-        <p>₱1,000</p>
-        <p>Demo duration: 90 days</p>
-        <button onclick="showDemo('Premium package')">
-          View Details
-        </button>
-      </div>
-    </div>
+    <div class="grid" id="packages"></div>
   </section>
 
   <section class="card">
     <h2>My Investments</h2>
-    <p>No demo investments yet.</p>
-    <p>Investment dates and expiration details
-       will appear here in the full version.</p>
+    <div id="investments">No demo investments yet.</div>
   </section>
 
   <section class="card">
     <h2>Transaction History</h2>
-    <p>No demo transactions yet.</p>
+    <div id="history">No demo transactions yet.</div>
   </section>
 
   <section class="card">
     <h2>ABC Community</h2>
     <p>Join our Telegram community.</p>
     <a class="link"
-       href="https://t.me/+tZ5R0Xwgz-Y5OTI1"
-       target="_blank"
-       rel="noopener noreferrer">
+      href="https://t.me/+tZ5R0Xwgz-Y5OTI1"
+      target="_blank" rel="noopener noreferrer">
       Join Telegram
     </a>
   </section>
@@ -171,10 +163,175 @@ footer {
 </footer>
 
 <script>
-function showDemo(feature) {
-  document.getElementById("message").textContent =
-    feature + ": Demo preview only. No money was transferred.";
+let balance = 0;
+let history = [];
+let investments = [];
+
+const packages = [
+  { name: "Starter", price: 100, days: 30 },
+  { name: "Basic", price: 500, days: 60 },
+  { name: "Premium", price: 1000, days: 90 }
+];
+
+function money(value) {
+  return "₱" + value.toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 }
+
+function showMessage(text) {
+  document.getElementById("message").textContent = text;
+}
+
+function getAmount() {
+  const value = Number(document.getElementById("amount").value);
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    showMessage("Please enter a valid whole-number amount greater than zero.");
+    return null;
+  }
+  return value;
+}
+
+function addHistory(type, amount, note) {
+  history.unshift({
+    type,
+    amount,
+    note,
+    date: new Date().toLocaleString()
+  });
+  renderHistory();
+}
+
+function renderBalance() {
+  document.getElementById("balance").textContent = money(balance);
+}
+
+function topUp() {
+  const amount = getAmount();
+  if (amount === null) return;
+
+  if (!Number.isSafeInteger(balance + amount)) {
+    showMessage("That demo amount is too large.");
+    return;
+  }
+
+  balance += amount;
+  renderBalance();
+  addHistory("Demo Top Up", amount, "Simulated only");
+  showMessage(money(amount) + " added to the demo wallet. No money was transferred.");
+  document.getElementById("amount").value = "";
+}
+
+function withdraw() {
+  const amount = getAmount();
+  if (amount === null) return;
+
+  if (amount > balance) {
+    showMessage("Insufficient demo balance. Try a smaller amount or add demo funds.");
+    return;
+  }
+
+  balance -= amount;
+  renderBalance();
+  addHistory("Demo Withdrawal", amount, "Simulated only");
+  showMessage(money(amount) + " deducted from the demo wallet. No money was transferred.");
+  document.getElementById("amount").value = "";
+}
+
+function renderPackages() {
+  document.getElementById("packages").innerHTML = packages.map((p, i) => `
+    <div class="card">
+      <h3>${p.name}</h3>
+      <p><strong>${money(p.price)}</strong></p>
+      <p>Demo duration: ${p.days} days</p>
+      <button onclick="viewPackage(${i})">View Details</button>
+    </div>
+  `).join("");
+}
+
+function viewPackage(index) {
+  const p = packages[index];
+  const details =
+    p.name + " package: " + money(p.price) +
+    ", demo duration " + p.days +
+    " days. No returns are promised. This is a simulation only.";
+
+  const message = document.getElementById("message");
+  message.textContent = details;
+
+  if (confirm(details + "\n\nChoose OK to add this as a demo investment?")) {
+    startInvestment(index);
+  }
+}
+
+function startInvestment(index) {
+  const p = packages[index];
+
+  if (balance < p.price) {
+    showMessage("Not enough demo balance for " + p.name +
+      ". Use Demo Top Up first. No real money is accepted.");
+    return;
+  }
+
+  balance -= p.price;
+
+  const start = new Date();
+  const expiry = new Date(start);
+  expiry.setDate(expiry.getDate() + p.days);
+
+  investments.unshift({
+    name: p.name,
+    price: p.price,
+    start: start.toLocaleDateString(),
+    expiry: expiry.toLocaleDateString()
+  });
+
+  renderBalance();
+  renderInvestments();
+  addHistory("Demo Package", p.price, p.name + " selected");
+  showMessage(p.name + " added to your demo investments. No real investment was made.");
+}
+
+function renderInvestments() {
+  const el = document.getElementById("investments");
+
+  if (investments.length === 0) {
+    el.textContent = "No demo investments yet.";
+    return;
+  }
+
+  el.innerHTML = investments.map(item => `
+    <div class="record">
+      <strong>${item.name} (Demo)</strong><br>
+      Amount: ${money(item.price)}<br>
+      Started: ${item.start}<br>
+      Demo expiration: ${item.expiry}
+    </div>
+  `).join("");
+}
+
+function renderHistory() {
+  const el = document.getElementById("history");
+
+  if (history.length === 0) {
+    el.textContent = "No demo transactions yet.";
+    return;
+  }
+
+  el.innerHTML = history.map(item => `
+    <div class="record">
+      <strong>${item.type}</strong> — ${money(item.amount)}<br>
+      ${item.note}<br>
+      <small>${item.date}</small>
+    </div>
+  `).join("");
+}
+
+renderBalance();
+renderPackages();
+renderInvestments();
+renderHistory();
 </script>
 </body>
 </html>
