@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABC Investment</title>
+<style>
+:root {
+  --pink: #ec4899;
+  --dark: #9d174d;
+  --light: #fff1f7;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fff7fb;
+  color: #402338;
+}
+header {
+  background: linear-gradient(135deg, #ec4899, #a855f7);
+  color: white;
+  padding: 24px 18px;
+  border-radius: 0 0 25px 25px;
+}
+header h1 { margin: 0 0 8px; }
+header p { margin-bottom: 0; }
+main {
+  max-width: 760px;
+  margin: auto;
+  padding: 18px;
+}
+.notice {
+  background: #fff0c2;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.balance {
+  background: white;
+  padding: 22px;
+  border-radius: 18px;
+  margin: 16px 0;
+  box-shadow: 0 4px 18px #e9b6d433;
+}
+.amount { font-size: 32px; color: var(--dark); }
+button, .link {
+  display: inline-block;
+  border: 0;
+  background: var(--pink);
+  color: white;
+  padding: 12px 16px;
+  margin: 5px 4px 5px 0;
+  border-radius: 12px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+}
+.secondary { background: #fce7f3; color: var(--dark); }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 12px;
+}
+.card {
+  background: white;
+  border: 1px solid #fbcfe8;
+  border-radius: 16px;
+  padding: 16px;
+}
+.card h3 { color: var(--dark); }
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #e9a8ca;
+  border-radius: 10px;
+}
+section { margin: 22px 0; }
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #85546d;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>💗 ABC Investment</h1>
+  <p>Your financial dashboard</p>
+</header>
+
+<main>
+  <div class="notice">
+    <strong>DEMO MODE ONLY</strong><br>
+    This is a website prototype. All balances and
+    transactions are simulated. No real money is
+    accepted, and no investment returns are promised.
+  </div>
+
+  <section class="balance">
+    <p>Demo Wallet Balance</p>
+    <div class="amount">₱0.00</div>
+    <button onclick="showDemo('Top Up')">Top Up</button>
+    <button class="secondary"
+      onclick="showDemo('Withdrawal')">Withdraw</button>
+    <p id="message"></p>
+  </section>
+
+  <section>
+    <h2>Investment Packages</h2>
+    <p>Illustrative packages — not real investment offers.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Starter</h3>
+        <p>₱100</p>
+        <p>Demo duration: 30 days</p>
+        <button onclick="showDemo('Starter package')">
+          View Details
+        </button>
+      </div>
+      <div class="card">
+        <h3>Basic</h3>
+        <p>₱500</p>
+        <p>Demo duration: 60 days</p>
+        <button onclick="showDemo('Basic package')">
+          View Details
+        </button>
+      </div>
+      <div class="card">
+        <h3>Premium</h3>
+        <p>₱1,000</p>
+        <p>Demo duration: 90 days</p>
+        <button onclick="showDemo('Premium package')">
+          View Details
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>My Investments</h2>
+    <p>No demo investments yet.</p>
+    <p>Investment dates and expiration details
+       will appear here in the full version.</p>
+  </section>
+
+  <section class="card">
+    <h2>Transaction History</h2>
+    <p>No demo transactions yet.</p>
+  </section>
+
+  <section class="card">
+    <h2>ABC Community</h2>
+    <p>Join our Telegram community.</p>
+    <a class="link"
+       href="https://t.me/+tZ5R0Xwgz-Y5OTI1"
+       target="_blank"
+       rel="noopener noreferrer">
+      Join Telegram
+    </a>
+  </section>
+</main>
+
+<footer>
+  ABC Investment · Prototype<br>
+  Demo only — no real deposits or withdrawals.
+</footer>
+
+<script>
+function showDemo(feature) {
+  document.getElementById("message").textContent =
+    feature + ": Demo preview only. No money was transferred.";
+}
+</script>
+</body>
+</html>
