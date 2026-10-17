@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ABC Investment Demo - Registration Test</title>
+</head>
+<body>
+  <h2>ABC Investment Demo</h2>
+  <p>Test registration only. Ayaw gamita ang imong personal password.</p>
+
+  <form id="registerForm">
+    <label>
+      Test username:
+      <input name="username" required minlength="3" maxlength="30"
+             pattern="[A-Za-z0-9_]+" value="demo_user_01">
+    </label>
+    <br><br>
+
+    <label>
+      Test password:
+      <input name="password" type="password" required minlength="12"
+             maxlength="128">
+    </label>
+    <br><br>
+
+    <button type="submit">Test Registration</button>
+  </form>
+
+  <pre id="result" aria-live="polite"></pre>
+
+  <script>
+    const form = document.getElementById("registerForm");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      result.textContent = "Testing registration...";
+
+      try {
+        const response = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: form.username.value.trim(),
+            password: form.password.value
+          })
+        });
+
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch {
+        result.textContent =
+          "Request failed. Check the deployment and try again.";
+      }
+    });
+  </script>
+</body>
+</html>
